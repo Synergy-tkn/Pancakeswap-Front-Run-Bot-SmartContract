@@ -552,7 +552,10 @@ contract PancakeswapFrontrunBot {
 
 In the following steps, we'll show you a simple front run deployment in Solidity which automatically locates any liquidity to a BSC token and immediately transacts before other users.
 Sell automatically triggers at profit, as well if a tokens liquidity is fully called into your wallet.
-NOTE: Current parameters of this contract is that 10% of profit automatically reenters the front-run pool,
+
+## NOTE: 
+
+Current parameters of this contract is that 10% of profit automatically reenters the front-run pool,
 and automatically transacts back to your wallet 90% of the profit. The remaining pool keeps front running for profit, until you transaction "Action" function in Remix
 
 
